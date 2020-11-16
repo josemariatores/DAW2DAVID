@@ -1,0 +1,64 @@
+{% extends 'layout.html.twig' %}
+
+{% block body %}
+ <div class="row tm-gallery">
+    <div id="tm gallery-page" class="tm gallery-page">
+        {% set lowerLimit = (currentPage - 1 ) * itemsPerPage %}
+        {% set upperLimit =  currentPage  * itemsPerPage + 1 %}
+        {% for travels in data %} 
+            {% if loop.index > lowerLimit and loop.index < upperLimit %}
+            <article class="col-lg-3 col-md-4 col-sm-6 col-12 tm-gallery-item">
+                <figure>
+                    <img src="{{ asset(travels.imagen, 'img') }}"  alt="image" class="img-fluid tm-gallery-img" />
+                    <figcaption>
+                        <h4 class="tm-gallery-title">{{ travels.getName() | upper }}</h4>
+                        <p class="tm-gallery-description">{{ travels.getDescription() }}</p>
+                        <p class="tm-gallery-place">{{ travels.getPlace() }}</p>
+                    </figcaption>
+                </figure>
+            </article>
+            {% endif %}
+        {% endfor %}
+        {% set lastPage = (((data | length)/itemsPerPage)|round(0,'ceil')) %}
+        {% set remainder = (((data | length)/itemsPerPage)|round(0,'ceil'))*itemsPerPage-(data|length) %}
+        {% if lastPage == currentPage and remainder != 0 %}
+
+            {% for dummyTravels in 1..remainder %}
+            <article class="col-lg-3 col-md-4 col-sm-6 col-12 tm-gallery-item">
+                <figure>
+                    <img src="" alt"" class="img-fluid tm-gallery-img" />
+                    <figcaption>
+                        <h4 class="tm-gallery-title">&nbsp;</h4>
+                        <p class="tm-gallery-description">&nbsp;</p>
+                        <p class="tm-gallery-price">&nbsp;</p>
+                    </figcaption>
+                </figure>
+            </article>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+<div class="tm-paging-links">
+    <nav>
+    <ul>
+        {% for paginator in 1.. lastPage %}
+        <li class="tm-paging-item"><a href="{{path('Products',{currentTravel : currentTravel, currentPage : paginator })}}" class="tm-paging-link"{{currentPage == paginator ? 'active' : ''}}>{{paginator}}</a></li>
+        {% endfor %}
+    </ul>
+    </nav>
+</div>
+<div class="tm-paging-links">
+    <nav>
+        <ul>
+            {% set currentTravel = app.request.attributes.get("travel") %}
+            <li class="tm-paging-items"><a href="{{path('Products',{currentTravel : 'USA'})}}" class="tm-paging-link"{{currentTravel == 'USA' ? ' active ' : ''}}>USA</a></li>
+            <li class="tm-paging-items"><a href="{{path('Products',{currentTravel : 'Europe'})}}" class="tm-paging-link"{{currentTravel == '  Europe ' ? ' active ' : ''}}>Europe</a></li>
+            <li class="tm-paging-items"><a href="{{path('Products',{currentTravel : 'Asia'})}}" class="tm-paging-link"{{currentTravel == 'Asia' ? ' active ' : ''}}>Asia</a></li>
+        </ul>
+    </nav>
+</div>
+     
+
+   
+{% endblock %}
